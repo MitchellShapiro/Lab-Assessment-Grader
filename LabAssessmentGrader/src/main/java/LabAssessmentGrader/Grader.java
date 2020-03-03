@@ -1,5 +1,7 @@
 package LabAssessmentGrader;
 
+// author - Mitchell Shapiro - March 2020
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class Grader {
 	public Grader(String topDirectory, String harnessDirectory, String mainClass) {
 
 		boolean noHarness = harnessDirectory.length() <= 0;
-		
+
 		File dir = new File(topDirectory);
 		File harness = null;
 		if (!noHarness) {
@@ -36,13 +38,13 @@ public class Grader {
 		}
 		System.out.println("Temporary folder location: " + resultDir.getAbsolutePath());
 
-		try {		
+		try {
 			int index = 0;
 			if (directoryListing != null) {
 				for (File child : directoryListing) {
 					System.out.println("\nOpening: " + child.getName());
 					try {
-	
+
 						boolean wasZip = false;
 						if (!child.isDirectory() && getExtension(child.getAbsolutePath()).equals("zip")) {
 							wasZip = true;
@@ -53,28 +55,28 @@ public class Grader {
 								continue;
 							}
 						}
-	
+
 						if (!wasZip) {
 							// Copy the user files into the temp directory
 							FileUtils.copyDirectory(child, resultDir);
 						}
-	
+
 						if (!noHarness && harness != null) {
 							// Copy the harness files into the temp directory
 							File[] harnessFiles = harness.listFiles();
-		
+
 							if (harnessFiles == null) {
 								System.out.println("Error reading harness files, check path");
 								return;
 							}
-		
+
 							for (File harnessFile : harnessFiles) {
 								FileUtils.copyFileToDirectory(harnessFile, resultDir);
 							}
 						}
-	
+
 						runJava(resultDir, mainClass);
-	
+
 						// Don't ask to continue if no more items
 						if (index < directoryListing.length - 1) {
 							// This was originally optional but this made it too easy to miss programs that
@@ -82,7 +84,7 @@ public class Grader {
 							System.out.println("\nEnter any key to continue to next person...");
 							sc.nextLine();
 						}
-	
+
 						// Delete the temp directory
 						FileUtils.deleteDirectory(resultDir);
 						index++;
